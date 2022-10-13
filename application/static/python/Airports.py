@@ -56,7 +56,7 @@ class airports:
     def initialize_airports_list(self):
         
         # open the airports csv file in read mode
-        with open("server/application/static/Aeropuertos.csv") as csvfile:
+        with open("application/static/Aeropuertos.csv") as csvfile:
             # create a csv reader object with ; as delimiter
             reader = csv.DictReader(csvfile, delimiter=';')
             # iterate through the rows of the csv file
@@ -73,7 +73,7 @@ class airports:
                 self.airports_list.append(airport)
 
         # open the routes csv file in read mode
-        with open('server/application/static/Conexiones.csv', encoding='utf-8') as csvfile:
+        with open('application/static/Conexiones.csv', encoding='utf-8') as csvfile:
             # create two csv reader objects, one for the current row and the other to peek the next row
             reader, nextReader = itertools.tee(
                 csv.DictReader(csvfile, delimiter=";"))

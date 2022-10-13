@@ -1,5 +1,5 @@
 import sys 
-sys.path.insert(1,"server/run.py")
+sys.path.insert(1,"run.py")
 
 from run import app
 from flask import request, make_response
