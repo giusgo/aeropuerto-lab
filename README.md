@@ -1,7 +1,7 @@
 # VUELOS NACIONALES
 
 ## Live-demo
-Es posible probar una demo de la app <a href='https://vuelos-nacionalesv1.herokuapp.com/'>aquí</a>. En caso de encontrar algún error, es debido (muy seguramente) a algo de Heroku de lo que no podemos encargarnos, en tal caso solo es necesario volver a presionar el bot
+Es posible probar una demo de la app <a href='https://vuelos-nacionalesv1.herokuapp.com/'>aquí</a>. En caso de encontrar algún error, es debido (muy seguramente) a algo de Heroku de lo que no podemos encargarnos, en tal caso solo es necesario volver a presionar el boton o reiniciar la p
 
 Integrantes del grupo:
 <ul>
