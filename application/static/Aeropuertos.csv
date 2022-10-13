@@ -1,0 +1,50 @@
+nombre_con_tilde;nombre_sin_tilde;latitude_deg;longitude_deg;elevation_ft;municipality;ident;icao_code;iata_code
+Aeropuerto Internacional Alfonso Bonilla Aragón;Aeropuerto Internacional Alfonso Bonilla Aragon;3.54322;-76.3816;3162;Cali;SKCL;SKCL;CLO
+Aeropuerto Internacional Alfredo Vásquez Cobo;Aeropuerto Internacional Alfredo Vasquez Cobo;-4.19355;-69.9432;277;Leticia;SKLT;SKLT;LET
+Aeropuerto Internacional Camilo Daza;Aeropuerto Internacional Camilo Daza;7.92757;-72.5115;1096;Cúcuta;SKCC;SKCC;CUC
+Aeropuerto Internacional El Alcaraván;Aeropuerto Internacional El Alcaravan;5.31911;-72.384;1028;Yopal;SKYP;SKYP;EYP
+Aeropuerto Internacional El Dorado;Aeropuerto Internacional El Dorado;4.70159;-74.1469;8361;Bogota;SKBO;SKBO;BOG
+Aeropuerto Internacional El Edén;Aeropuerto Internacional El Eden;4.45278;-75.7664;3990;Armenia;SKAR;SKAR;AXM
+Aeropuerto Internacional Ernesto Cortissoz;Aeropuerto Internacional Ernesto Cortissoz;10.8896;-74.7808;98;Barranquilla;SKBQ;SKBQ;BAQ
+Aeropuerto Internacional Gustavo Rojas Pinilla;Aeropuerto Internacional Gustavo Rojas Pinilla;12.5836;-81.7112;19;San Andrés - Isla;SKSP;SKSP;ADZ
+Aeropuerto Internacional José María Córdova;Aeropuerto Internacional Jose Maria Cordova;6.16454;-75.4231;6955;Rionegro;SKRG;SKRG;MDE
+Aeropuerto Internacional Los Garzones;Aeropuerto Internacional Los Garzones;8.82374;-75.8258;41;Montería;SKMR;SKMR;MTR
+Aeropuerto Internacional Matecaña;Aeropuerto Internacional Matecana;4.81267;-75.7395;4416;Pereira;SKPE;SKPE;PEI
+Aeropuerto Internacional Palonegro;Aeropuerto Internacional Palonegro;7.1265;-73.1848;3897;Bucaramanga;SKBG;SKBG;BGA
+Aeropuerto Internacional Rafael Núñez;Aeropuerto Internacional Rafael Nunez;10.4424;-75.513;4;Cartagena;SKCG;SKCG;CTG
+Aeropuerto Internacional Simón Bolívar;Aeropuerto Internacional Simon Bolivar;11.1196;-74.2306;22;Santa Marta;SKSM;SKSM;SMR
+Alfonso Lopez Pumarejo;Alfonso Lopez Pumarejo;10.435;-73.2495;483;Valledupar;SKVP;SKVP;VUP
+Almirante Padilla;Almirante Padilla;11.5262;-72.926;43;Riohacha;SKRH;SKRH;RCH
+Antonio Nariño;Antonio Narino;1.39625;-77.2915;5951;Pasto;SKPS;SKPS;PSO
+Antonio Roldan Betancourt;Antonio Roldan Betancourt;7.81196;-76.7164;46;Carepa;SKLC;SKLC;APO
+Baracoa;Baracoa;9.28474;-74.8461;178;Magangué;SKMG;SKMG;MGN
+Benito Salas Vargas;Benito Salas Vargas;2.95015;-75.294;1464;Neiva;SKNV;SKNV;NVA
+César Gaviria Trujillo;Cesar Gaviria Trujillo;3.85353;-67.9062;460;Puerto Inírida;SKPD;SKPD;PDA
+Contador;Contador;1.85777;-76.0857;4212;Pitalito;SKPI;SKPI;PTX
+Eduardo Falla Solano;Eduardo Falla Solano;2.15217;-74.7663;920;San Vicente Del Caguán;SKSV;SKSV;SVI
+El Caraño;El Carano;5.69076;-76.6412;204;Quibdó;SKUI;SKUI;UIB
+El Embrujo;El Embrujo;13.357461;-81.357977;10;Providencia;SKPV;SKPV;PVA
+El tomín;El tomin;7.59647;-74.8089;180;El Bagre;SKEB;SKEB;EBG
+Fabio Alberto León Bentley;Fabio Alberto Leon Bentley;1.25366;-70.2339;680;Mitú;SKMU;SKMU;MVP
+Gabriel Vargas Santos;Gabriel Vargas Santos;6.45108;-71.7603;1050;Tame;SKTM;SKTM;TME
+Gerardo Tovar López;Gerardo Tovar Lopez;3.81963;-76.9898;48;Buenaventura;SKBU;SKBU;BUN
+Germán Olano;German Olano;6.18472;-67.4932;177;Puerto Carreño;SKPC;SKPC;PCR
+Guillermo León Valencia;Guillermo Leon Valencia;2.4544;-76.6093;5687;Popayán;SKPP;SKPP;PPN
+Gustavo Artunduaga Paredes;Gustavo Artunduaga Paredes;1.58919;-75.5644;803;Florencia;SKFL;SKFL;FLA
+Jorge Enrique González;Jorge Enrique Gonzalez;2.57969;-72.6394;605;San José Del Guaviare;SKSJ;SKSJ;SJE
+Jorge Isaacs;Jorge Isaacs;11.2325;-72.4901;281;Maicao;SKLM;SKLM;MCJ
+José Celestino Mutis;Jose Celestino Mutis;6.20292;-77.3947;80;Bahía Solano;SKBS;SKBS;BSC
+Juan Casiano Solís;Juan Casiano Solis;2.57013;-77.897969;164;Guapi;SKGP;SKGP;GPI
+Juan H. White;Juan H. White;7.96847;-75.1985;174;Caucasia;SKCU;SKCU;CAQ
+La Florida;La Florida;1.81442;-78.7492;8;Tumaco;SKCO;SKCO;TCO
+La Nubia;La Nubia;5.0296;-75.4647;6871;Manizales;SKMZ;SKMZ;MZL
+Las Brujas;Las Brujas;9.33274;-75.2856;528;Corozal;SKCZ;SKCZ;CZU
+Olaya Herrera;Olaya Herrera;6.220549;-75.590582;4949;Medellín;SKMD;SKMD;EOH
+Paz de Ariporo;Paz de Ariporo;5.87615;-71.8866;900;Paz De Ariporo;SKPZ;SKPZ;PZA
+Perales;Perales;4.42161;-75.1333;2999;Ibagué;SKIB;SKIB;IBE
+Santa Ana;Santa Ana;4.75818;-75.9557;2979;Cartago;SKGO;SKGO;CRC
+Santiago Pérez Quiroz;Santiago Perez Quiroz;7.06888;-70.7369;420;Arauca;SKUC;SKUC;AUC
+Santiago Vila;Santiago Vila;4.27624;-74.7967;900;Girardot;SKGI;SKGI;GIR
+Tres de Mayo;Tres de Mayo;0.505228;-76.5008;815;Puerto Asís;SKAS;SKAS;PUU
+Vanguardia;Vanguardia;4.16787;-73.6138;1394;Villavicencio;SKVV;SKVV;VVC
+Yariguíes;Yariguies;7.02433;-73.8068;412;Barrancabermeja;SKEJ;SKEJ;EJA

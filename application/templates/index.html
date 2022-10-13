@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<head>    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <script src="https://kit.fontawesome.com/51a9d021a9.js" crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    <link rel="stylesheet" href="../static/css/normalize.css">
+    <link rel="stylesheet" href="../static/css/styles.css">
+
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_44e742c23e81cd705d2fc47524212eb2 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+            </style>
+        
+</head>
+<body>    
+    
+            <div class="folium-map" id="map_44e742c23e81cd705d2fc47524212eb2" ></div>
+
+            <div class="my-styles panel-container">
+                <!-- PANEL -->
+                <div class="my-styles panel">
+                    <!-- TITLE -->
+                    <h1>VUELOS NACIONALES</h1>
+
+                    <hr>
+
+                    <!-- INSTRUCTIONS -->
+                    <section class="instructions">
+                        <h2>Cómo usar</h2>
+                        <div class="instructions-box">
+                            <p>
+                                Haga clic en cada aeropuerto para ver información.
+                                Luego, haga clic en 'Seleccionar' para añadir un vuelo de un
+                                aeropuerto a otro (en caso de que exista tal vuelo) y poder
+                                consultar información acerca de la ruta.
+                                Para eliminar un aeropuerto y todas las rutas directas a él,
+                                haga clic en él y luego en 'Quitar'.
+                                Si desea eliminar un vuelo en específico, haga doble clic
+                                sobre la arista deseada.<br><br>
+
+                                A continuación, podrá encontrar herramientas para
+                                interactuar con las rutas.
+                            </p>
+                        </div>
+                    </section>
+
+                    <hr>
+
+                    <!-- TOOLS -->
+                    <div class="tools">
+
+                        <div class="tools-controls">
+                            <div id="control-prev"><i class="fa-solid fa-caret-left"></i></div>
+                            
+                            <div id="control-next"><i class="fa-solid fa-caret-right"></i></div>
+                        </div>
+
+                        <div class="tools-container" id="tools-container">
+
+                            <div class="tools-wrapper">
+                                <section class="tool traverses">
+                                    <div class="actual-tool-wrapper">
+                                        <h3 class="actual-tool">Recorridos</h3>
+                                    </div>
+                                    <p>Haga clic en cualquier de los 2 botones y siga las instrucciones:</p>
+                                    <div class="buttons">
+                                        <button class="tool-button" onclick="Traversal('BFS')">Recorrido BFS</button>
+                                        <button class="tool-button" onclick="Traversal('DFS')">Recorrido DFS</button>
+                                    </div>
+                                    <p>Resultados <i id="copy-traversal" class="fa-regular fa-copy" onclick="CopyResultsTraversal()"></i></p>
+                                    <div class="results">
+                                        <ul id="results-traversal"></ul>
+                                    </div>
+                                </section>
+    
+                                <section class="tool paths">
+                                    <div class="actual-tool-wrapper">
+                                        <h3 class="actual-tool">Caminos</h3>
+                                    </div>
+                                    <p>Haga clic en cualquier de los 2 botones y vea el camino de menor distancia:</p>
+                                    <div class="buttons">
+                                        <button class="tool-button" onclick="SinglePath()">De un punto a otro</button>
+                                        <button class="tool-button" onclick="OneToAllPaths()">De un punto a los demás</button>
+                                    </div>
+                                    <p>Resultados <i id="copy-paths" class="fa-regular fa-copy" onclick="CopyResultsPaths()"></i></p>
+                                    <div class="results">
+                                        <ul id="results-path"></ul>
+                                    </div>
+                                </section>
+                            </div>
+                            
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+        
+</body>
+<script>    
+    
+            var map_44e742c23e81cd705d2fc47524212eb2 = L.map(
+                "map_44e742c23e81cd705d2fc47524212eb2",
+                {
+                    center: [4.74, -71.0],
+                    crs: L.CRS.EPSG3857,
+                    maxBounds: [[-6, -100], [20, -40]],
+                    zoom: 6,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_73a2e9d60c6f815cb512fc3f3c95e48d = L.tileLayer(
+                "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"http://cartodb.com/attributions\"\u003eCartoDB\u003c/a\u003e, CartoDB \u003ca href =\"http://cartodb.com/attributions\"\u003eattributions\u003c/a\u003e", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 6, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var marker_b72d77dac1f7285530d7d6a702d76590 = L.marker(
+                [3.54322, -76.3816],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_fad5cf6bd94b1e23a93f0df05e900df2 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_b72d77dac1f7285530d7d6a702d76590.setIcon(icon_fad5cf6bd94b1e23a93f0df05e900df2);
+        
+    
+        var popup_e233cf19387773338600b8d68557aa45 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_7d074d64ff67c2645ad92889bb166b78 = $(`<div id="html_7d074d64ff67c2645ad92889bb166b78" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Aeropuerto Internacional Alfonso Bonilla Aragón</p>         <p><b>Ubicación:</b> Cali</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Aeropuerto Internacional Alfonso Bonilla Aragón' lat='3.54322' lon='-76.3816'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Aeropuerto Internacional Alfonso Bonilla Aragón',3.54322,-76.3816)"             >Seleccionar</button>              <button id='del_Aeropuerto Internacional Alfonso Bonilla Aragón' lat='3.54322' lon='-76.3816'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Aeropuerto Internacional Alfonso Bonilla Aragón',3.54322,-76.3816)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_e233cf19387773338600b8d68557aa45.setContent(html_7d074d64ff67c2645ad92889bb166b78);
+            
+        
+
+        marker_b72d77dac1f7285530d7d6a702d76590.bindPopup(popup_e233cf19387773338600b8d68557aa45)
+        ;
+
+        
+    
+    
+            var marker_fc692f3d38696bb30722e213e03b9d0f = L.marker(
+                [-4.19355, -69.9432],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_bb2ce8b5c8fbde8dd24a8ecce60807fd = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_fc692f3d38696bb30722e213e03b9d0f.setIcon(icon_bb2ce8b5c8fbde8dd24a8ecce60807fd);
+        
+    
+        var popup_d4f4d9a5d331d809d033b8c6e9423638 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_74819ca53a9a77668f1839b63081f3b1 = $(`<div id="html_74819ca53a9a77668f1839b63081f3b1" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Aeropuerto Internacional Alfredo Vásquez Cobo</p>         <p><b>Ubicación:</b> Leticia</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Aeropuerto Internacional Alfredo Vásquez Cobo' lat='-4.19355' lon='-69.9432'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Aeropuerto Internacional Alfredo Vásquez Cobo',-4.19355,-69.9432)"             >Seleccionar</button>              <button id='del_Aeropuerto Internacional Alfredo Vásquez Cobo' lat='-4.19355' lon='-69.9432'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Aeropuerto Internacional Alfredo Vásquez Cobo',-4.19355,-69.9432)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_d4f4d9a5d331d809d033b8c6e9423638.setContent(html_74819ca53a9a77668f1839b63081f3b1);
+            
+        
+
+        marker_fc692f3d38696bb30722e213e03b9d0f.bindPopup(popup_d4f4d9a5d331d809d033b8c6e9423638)
+        ;
+
+        
+    
+    
+            var marker_f5a473c5d4fc56e15b688ccd52c0895e = L.marker(
+                [7.92757, -72.5115],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_88ac4b1f2c75f97c6455371b5373b4e0 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_f5a473c5d4fc56e15b688ccd52c0895e.setIcon(icon_88ac4b1f2c75f97c6455371b5373b4e0);
+        
+    
+        var popup_cb5c3f9ef1ff8de1904edff680a02ae8 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_caff4035a158cbe6dcf360e45fb11abc = $(`<div id="html_caff4035a158cbe6dcf360e45fb11abc" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Aeropuerto Internacional Camilo Daza</p>         <p><b>Ubicación:</b> Cúcuta</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Aeropuerto Internacional Camilo Daza' lat='7.92757' lon='-72.5115'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Aeropuerto Internacional Camilo Daza',7.92757,-72.5115)"             >Seleccionar</button>              <button id='del_Aeropuerto Internacional Camilo Daza' lat='7.92757' lon='-72.5115'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Aeropuerto Internacional Camilo Daza',7.92757,-72.5115)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_cb5c3f9ef1ff8de1904edff680a02ae8.setContent(html_caff4035a158cbe6dcf360e45fb11abc);
+            
+        
+
+        marker_f5a473c5d4fc56e15b688ccd52c0895e.bindPopup(popup_cb5c3f9ef1ff8de1904edff680a02ae8)
+        ;
+
+        
+    
+    
+            var marker_f3bc3bca9c8fff38e7531fcfde94ed7e = L.marker(
+                [5.31911, -72.384],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_f928f178d2d90a4b1793918a9b649c55 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_f3bc3bca9c8fff38e7531fcfde94ed7e.setIcon(icon_f928f178d2d90a4b1793918a9b649c55);
+        
+    
+        var popup_8e7967b6eded68eea14c10c6d2902f3c = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_53e009fddac0bfd1f39418c858b201b2 = $(`<div id="html_53e009fddac0bfd1f39418c858b201b2" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Aeropuerto Internacional El Alcaraván</p>         <p><b>Ubicación:</b> Yopal</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Aeropuerto Internacional El Alcaraván' lat='5.31911' lon='-72.384'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Aeropuerto Internacional El Alcaraván',5.31911,-72.384)"             >Seleccionar</button>              <button id='del_Aeropuerto Internacional El Alcaraván' lat='5.31911' lon='-72.384'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Aeropuerto Internacional El Alcaraván',5.31911,-72.384)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_8e7967b6eded68eea14c10c6d2902f3c.setContent(html_53e009fddac0bfd1f39418c858b201b2);
+            
+        
+
+        marker_f3bc3bca9c8fff38e7531fcfde94ed7e.bindPopup(popup_8e7967b6eded68eea14c10c6d2902f3c)
+        ;
+
+        
+    
+    
+            var marker_eb54932ac491b9d1893831a3773af769 = L.marker(
+                [4.70159, -74.1469],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_98214d851c73f347960ddfe947915056 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_eb54932ac491b9d1893831a3773af769.setIcon(icon_98214d851c73f347960ddfe947915056);
+        
+    
+        var popup_edc7fb7d1f30a9be6929320dd2b979a4 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_045b66106dfc2934b5f1b7408b06dba3 = $(`<div id="html_045b66106dfc2934b5f1b7408b06dba3" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Aeropuerto Internacional El Dorado</p>         <p><b>Ubicación:</b> Bogota</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Aeropuerto Internacional El Dorado' lat='4.70159' lon='-74.1469'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Aeropuerto Internacional El Dorado',4.70159,-74.1469)"             >Seleccionar</button>              <button id='del_Aeropuerto Internacional El Dorado' lat='4.70159' lon='-74.1469'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Aeropuerto Internacional El Dorado',4.70159,-74.1469)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_edc7fb7d1f30a9be6929320dd2b979a4.setContent(html_045b66106dfc2934b5f1b7408b06dba3);
+            
+        
+
+        marker_eb54932ac491b9d1893831a3773af769.bindPopup(popup_edc7fb7d1f30a9be6929320dd2b979a4)
+        ;
+
+        
+    
+    
+            var marker_d71abcae487b498deaf57f0f7de4f044 = L.marker(
+                [4.45278, -75.7664],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_a2de5a1ad260cf42ed2a8da98abe282e = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_d71abcae487b498deaf57f0f7de4f044.setIcon(icon_a2de5a1ad260cf42ed2a8da98abe282e);
+        
+    
+        var popup_5ff2fe132e90cd73f8a5df95f7c4ab79 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_413bd5a7768511b5a62bfb2962360fea = $(`<div id="html_413bd5a7768511b5a62bfb2962360fea" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Aeropuerto Internacional El Edén</p>         <p><b>Ubicación:</b> Armenia</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Aeropuerto Internacional El Edén' lat='4.45278' lon='-75.7664'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Aeropuerto Internacional El Edén',4.45278,-75.7664)"             >Seleccionar</button>              <button id='del_Aeropuerto Internacional El Edén' lat='4.45278' lon='-75.7664'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Aeropuerto Internacional El Edén',4.45278,-75.7664)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_5ff2fe132e90cd73f8a5df95f7c4ab79.setContent(html_413bd5a7768511b5a62bfb2962360fea);
+            
+        
+
+        marker_d71abcae487b498deaf57f0f7de4f044.bindPopup(popup_5ff2fe132e90cd73f8a5df95f7c4ab79)
+        ;
+
+        
+    
+    
+            var marker_5a6786d93ec1fd7f128c379d85f28648 = L.marker(
+                [10.8896, -74.7808],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_0682aba8f2a8c45ec7abd1e37b456392 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_5a6786d93ec1fd7f128c379d85f28648.setIcon(icon_0682aba8f2a8c45ec7abd1e37b456392);
+        
+    
+        var popup_e8b5167db80d463706cbcde7fc20191b = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_daf2affeb7a343a4650b3102c5043599 = $(`<div id="html_daf2affeb7a343a4650b3102c5043599" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Aeropuerto Internacional Ernesto Cortissoz</p>         <p><b>Ubicación:</b> Barranquilla</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Aeropuerto Internacional Ernesto Cortissoz' lat='10.8896' lon='-74.7808'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Aeropuerto Internacional Ernesto Cortissoz',10.8896,-74.7808)"             >Seleccionar</button>              <button id='del_Aeropuerto Internacional Ernesto Cortissoz' lat='10.8896' lon='-74.7808'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Aeropuerto Internacional Ernesto Cortissoz',10.8896,-74.7808)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_e8b5167db80d463706cbcde7fc20191b.setContent(html_daf2affeb7a343a4650b3102c5043599);
+            
+        
+
+        marker_5a6786d93ec1fd7f128c379d85f28648.bindPopup(popup_e8b5167db80d463706cbcde7fc20191b)
+        ;
+
+        
+    
+    
+            var marker_efc5431df9ec54357f5c85a7406ba8f1 = L.marker(
+                [12.5836, -81.7112],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_a93decf344cb67d64a1487143da5de77 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_efc5431df9ec54357f5c85a7406ba8f1.setIcon(icon_a93decf344cb67d64a1487143da5de77);
+        
+    
+        var popup_493091107c0b37bf0de2c4ea1ae80794 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_e0f6002384b6c96d2408c190cb85ab63 = $(`<div id="html_e0f6002384b6c96d2408c190cb85ab63" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Aeropuerto Internacional Gustavo Rojas Pinilla</p>         <p><b>Ubicación:</b> San Andrés - Isla</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Aeropuerto Internacional Gustavo Rojas Pinilla' lat='12.5836' lon='-81.7112'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Aeropuerto Internacional Gustavo Rojas Pinilla',12.5836,-81.7112)"             >Seleccionar</button>              <button id='del_Aeropuerto Internacional Gustavo Rojas Pinilla' lat='12.5836' lon='-81.7112'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Aeropuerto Internacional Gustavo Rojas Pinilla',12.5836,-81.7112)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_493091107c0b37bf0de2c4ea1ae80794.setContent(html_e0f6002384b6c96d2408c190cb85ab63);
+            
+        
+
+        marker_efc5431df9ec54357f5c85a7406ba8f1.bindPopup(popup_493091107c0b37bf0de2c4ea1ae80794)
+        ;
+
+        
+    
+    
+            var marker_5458293455abc8c2420c3d8cf7232cf5 = L.marker(
+                [6.16454, -75.4231],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_5be6adfaffd6547f56debd0d862a383d = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_5458293455abc8c2420c3d8cf7232cf5.setIcon(icon_5be6adfaffd6547f56debd0d862a383d);
+        
+    
+        var popup_ade857f6e43515efe8b4d0d8453a0f43 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_3b5d6c12b7ec47d1466a0dbbacdf109c = $(`<div id="html_3b5d6c12b7ec47d1466a0dbbacdf109c" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Aeropuerto Internacional José María Córdova</p>         <p><b>Ubicación:</b> Rionegro</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Aeropuerto Internacional José María Córdova' lat='6.16454' lon='-75.4231'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Aeropuerto Internacional José María Córdova',6.16454,-75.4231)"             >Seleccionar</button>              <button id='del_Aeropuerto Internacional José María Córdova' lat='6.16454' lon='-75.4231'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Aeropuerto Internacional José María Córdova',6.16454,-75.4231)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_ade857f6e43515efe8b4d0d8453a0f43.setContent(html_3b5d6c12b7ec47d1466a0dbbacdf109c);
+            
+        
+
+        marker_5458293455abc8c2420c3d8cf7232cf5.bindPopup(popup_ade857f6e43515efe8b4d0d8453a0f43)
+        ;
+
+        
+    
+    
+            var marker_df052c7430060580baac65e5a2f292dc = L.marker(
+                [8.82374, -75.8258],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_8c83d53b351c98e4b448991ca30823bc = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_df052c7430060580baac65e5a2f292dc.setIcon(icon_8c83d53b351c98e4b448991ca30823bc);
+        
+    
+        var popup_be059fc2be07294880a1fb1accc9fc56 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_c49a78cbfa7cf3d986a5380927dfcd6b = $(`<div id="html_c49a78cbfa7cf3d986a5380927dfcd6b" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Aeropuerto Internacional Los Garzones</p>         <p><b>Ubicación:</b> Montería</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Aeropuerto Internacional Los Garzones' lat='8.82374' lon='-75.8258'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Aeropuerto Internacional Los Garzones',8.82374,-75.8258)"             >Seleccionar</button>              <button id='del_Aeropuerto Internacional Los Garzones' lat='8.82374' lon='-75.8258'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Aeropuerto Internacional Los Garzones',8.82374,-75.8258)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_be059fc2be07294880a1fb1accc9fc56.setContent(html_c49a78cbfa7cf3d986a5380927dfcd6b);
+            
+        
+
+        marker_df052c7430060580baac65e5a2f292dc.bindPopup(popup_be059fc2be07294880a1fb1accc9fc56)
+        ;
+
+        
+    
+    
+            var marker_181be55c84a8395fe676cc942035bc0d = L.marker(
+                [4.81267, -75.7395],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_3dcf463a5d14022764a850e78dc9862f = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_181be55c84a8395fe676cc942035bc0d.setIcon(icon_3dcf463a5d14022764a850e78dc9862f);
+        
+    
+        var popup_58c5b15a1305795bc8395c5ef984e3af = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_62f4160c3fb6a69971dd46bf054ea200 = $(`<div id="html_62f4160c3fb6a69971dd46bf054ea200" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Aeropuerto Internacional MatecaÑa</p>         <p><b>Ubicación:</b> Pereira</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Aeropuerto Internacional MatecaÑa' lat='4.81267' lon='-75.7395'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Aeropuerto Internacional MatecaÑa',4.81267,-75.7395)"             >Seleccionar</button>              <button id='del_Aeropuerto Internacional MatecaÑa' lat='4.81267' lon='-75.7395'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Aeropuerto Internacional MatecaÑa',4.81267,-75.7395)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_58c5b15a1305795bc8395c5ef984e3af.setContent(html_62f4160c3fb6a69971dd46bf054ea200);
+            
+        
+
+        marker_181be55c84a8395fe676cc942035bc0d.bindPopup(popup_58c5b15a1305795bc8395c5ef984e3af)
+        ;
+
+        
+    
+    
+            var marker_0b1ab827d31f3c4f1748c635dad7a1e4 = L.marker(
+                [7.1265, -73.1848],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_59c766f580fe0716122d86dc2491e93d = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_0b1ab827d31f3c4f1748c635dad7a1e4.setIcon(icon_59c766f580fe0716122d86dc2491e93d);
+        
+    
+        var popup_7c0b7df8c3ad65c3a4d67d9a9f88be99 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_2a135b78ba0b8677b609b8d179633153 = $(`<div id="html_2a135b78ba0b8677b609b8d179633153" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Aeropuerto Internacional Palonegro</p>         <p><b>Ubicación:</b> Bucaramanga</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Aeropuerto Internacional Palonegro' lat='7.1265' lon='-73.1848'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Aeropuerto Internacional Palonegro',7.1265,-73.1848)"             >Seleccionar</button>              <button id='del_Aeropuerto Internacional Palonegro' lat='7.1265' lon='-73.1848'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Aeropuerto Internacional Palonegro',7.1265,-73.1848)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_7c0b7df8c3ad65c3a4d67d9a9f88be99.setContent(html_2a135b78ba0b8677b609b8d179633153);
+            
+        
+
+        marker_0b1ab827d31f3c4f1748c635dad7a1e4.bindPopup(popup_7c0b7df8c3ad65c3a4d67d9a9f88be99)
+        ;
+
+        
+    
+    
+            var marker_dd7f6de5e5748a612292f2a1c1dff412 = L.marker(
+                [10.4424, -75.513],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_f52d58b4f8f7e310259a64cc800abe9d = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_dd7f6de5e5748a612292f2a1c1dff412.setIcon(icon_f52d58b4f8f7e310259a64cc800abe9d);
+        
+    
+        var popup_8c8b5f7c2373024421f916b580647471 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_3682f5fa7a0e2845661721ba5c201a9a = $(`<div id="html_3682f5fa7a0e2845661721ba5c201a9a" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Aeropuerto Internacional Rafael Núñez</p>         <p><b>Ubicación:</b> Cartagena</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Aeropuerto Internacional Rafael Núñez' lat='10.4424' lon='-75.513'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Aeropuerto Internacional Rafael Núñez',10.4424,-75.513)"             >Seleccionar</button>              <button id='del_Aeropuerto Internacional Rafael Núñez' lat='10.4424' lon='-75.513'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Aeropuerto Internacional Rafael Núñez',10.4424,-75.513)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_8c8b5f7c2373024421f916b580647471.setContent(html_3682f5fa7a0e2845661721ba5c201a9a);
+            
+        
+
+        marker_dd7f6de5e5748a612292f2a1c1dff412.bindPopup(popup_8c8b5f7c2373024421f916b580647471)
+        ;
+
+        
+    
+    
+            var marker_16afe8799f8843d0f181f7a7d6262d47 = L.marker(
+                [11.1196, -74.2306],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_3a69945e2d3fb26be5df6fd9ceb3d38a = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_16afe8799f8843d0f181f7a7d6262d47.setIcon(icon_3a69945e2d3fb26be5df6fd9ceb3d38a);
+        
+    
+        var popup_dc6cc67d122f88746b23c0954bc97a85 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_ab87a99896e843fdedef399458cfc534 = $(`<div id="html_ab87a99896e843fdedef399458cfc534" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Aeropuerto Internacional Simón Bolívar</p>         <p><b>Ubicación:</b> Santa Marta</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Aeropuerto Internacional Simón Bolívar' lat='11.1196' lon='-74.2306'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Aeropuerto Internacional Simón Bolívar',11.1196,-74.2306)"             >Seleccionar</button>              <button id='del_Aeropuerto Internacional Simón Bolívar' lat='11.1196' lon='-74.2306'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Aeropuerto Internacional Simón Bolívar',11.1196,-74.2306)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_dc6cc67d122f88746b23c0954bc97a85.setContent(html_ab87a99896e843fdedef399458cfc534);
+            
+        
+
+        marker_16afe8799f8843d0f181f7a7d6262d47.bindPopup(popup_dc6cc67d122f88746b23c0954bc97a85)
+        ;
+
+        
+    
+    
+            var marker_0e943e99ade6238f68f6539e3101ee2d = L.marker(
+                [10.435, -73.2495],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_4d5c2c465688e09402ac938fe62e80de = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_0e943e99ade6238f68f6539e3101ee2d.setIcon(icon_4d5c2c465688e09402ac938fe62e80de);
+        
+    
+        var popup_b92599ef262fa9ff46c7fb0409d6be3f = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_d184121a4fe7da22e3380499625b2bf0 = $(`<div id="html_d184121a4fe7da22e3380499625b2bf0" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Alfonso Lopez Pumarejo</p>         <p><b>Ubicación:</b> Valledupar</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Alfonso Lopez Pumarejo' lat='10.435' lon='-73.2495'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Alfonso Lopez Pumarejo',10.435,-73.2495)"             >Seleccionar</button>              <button id='del_Alfonso Lopez Pumarejo' lat='10.435' lon='-73.2495'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Alfonso Lopez Pumarejo',10.435,-73.2495)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_b92599ef262fa9ff46c7fb0409d6be3f.setContent(html_d184121a4fe7da22e3380499625b2bf0);
+            
+        
+
+        marker_0e943e99ade6238f68f6539e3101ee2d.bindPopup(popup_b92599ef262fa9ff46c7fb0409d6be3f)
+        ;
+
+        
+    
+    
+            var marker_6f2472ebf12b8e6c7fbc9d32f6a4eb49 = L.marker(
+                [11.5262, -72.926],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_85a846ac2527fddeef19a67b12cc17b4 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_6f2472ebf12b8e6c7fbc9d32f6a4eb49.setIcon(icon_85a846ac2527fddeef19a67b12cc17b4);
+        
+    
+        var popup_1cdaed4927cf41d800aa6c8e30fd41e0 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_2483247c2cf3ae7dbc06b89b51249c9a = $(`<div id="html_2483247c2cf3ae7dbc06b89b51249c9a" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Almirante Padilla</p>         <p><b>Ubicación:</b> Riohacha</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Almirante Padilla' lat='11.5262' lon='-72.926'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Almirante Padilla',11.5262,-72.926)"             >Seleccionar</button>              <button id='del_Almirante Padilla' lat='11.5262' lon='-72.926'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Almirante Padilla',11.5262,-72.926)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_1cdaed4927cf41d800aa6c8e30fd41e0.setContent(html_2483247c2cf3ae7dbc06b89b51249c9a);
+            
+        
+
+        marker_6f2472ebf12b8e6c7fbc9d32f6a4eb49.bindPopup(popup_1cdaed4927cf41d800aa6c8e30fd41e0)
+        ;
+
+        
+    
+    
+            var marker_05d0803c64c8a2a5efc3df145e1df3ae = L.marker(
+                [1.39625, -77.2915],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_7d230b3b5007d97d3086ef4ea7e0f263 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_05d0803c64c8a2a5efc3df145e1df3ae.setIcon(icon_7d230b3b5007d97d3086ef4ea7e0f263);
+        
+    
+        var popup_bf051b5a9f6ffb0bd4047a576fbe1ad7 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_f0266293840db5e5c95d4cd0bf16e3c0 = $(`<div id="html_f0266293840db5e5c95d4cd0bf16e3c0" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Antonio Nariño</p>         <p><b>Ubicación:</b> Pasto</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Antonio Nariño' lat='1.39625' lon='-77.2915'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Antonio Nariño',1.39625,-77.2915)"             >Seleccionar</button>              <button id='del_Antonio Nariño' lat='1.39625' lon='-77.2915'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Antonio Nariño',1.39625,-77.2915)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_bf051b5a9f6ffb0bd4047a576fbe1ad7.setContent(html_f0266293840db5e5c95d4cd0bf16e3c0);
+            
+        
+
+        marker_05d0803c64c8a2a5efc3df145e1df3ae.bindPopup(popup_bf051b5a9f6ffb0bd4047a576fbe1ad7)
+        ;
+
+        
+    
+    
+            var marker_3f93b52e9a78d1aa39005fb9e14a94c2 = L.marker(
+                [7.81196, -76.7164],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_4383937c385540c9928a91c728f1436d = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_3f93b52e9a78d1aa39005fb9e14a94c2.setIcon(icon_4383937c385540c9928a91c728f1436d);
+        
+    
+        var popup_d1521c4c1f35de1456d52ffed8012e62 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_1c51cfdeb87a10ad73f17864393ec4a8 = $(`<div id="html_1c51cfdeb87a10ad73f17864393ec4a8" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Antonio Roldan Betancourt</p>         <p><b>Ubicación:</b> Carepa</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Antonio Roldan Betancourt' lat='7.81196' lon='-76.7164'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Antonio Roldan Betancourt',7.81196,-76.7164)"             >Seleccionar</button>              <button id='del_Antonio Roldan Betancourt' lat='7.81196' lon='-76.7164'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Antonio Roldan Betancourt',7.81196,-76.7164)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_d1521c4c1f35de1456d52ffed8012e62.setContent(html_1c51cfdeb87a10ad73f17864393ec4a8);
+            
+        
+
+        marker_3f93b52e9a78d1aa39005fb9e14a94c2.bindPopup(popup_d1521c4c1f35de1456d52ffed8012e62)
+        ;
+
+        
+    
+    
+            var marker_23cc7b71937dd638c506414849c4ecee = L.marker(
+                [9.28474, -74.8461],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_89b086d268da14da9081bf87b1bb9af6 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_23cc7b71937dd638c506414849c4ecee.setIcon(icon_89b086d268da14da9081bf87b1bb9af6);
+        
+    
+        var popup_8f037e93c8d225d559cf14cddbcc725b = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_c0e53bb7afcb31964274e4b07aca196c = $(`<div id="html_c0e53bb7afcb31964274e4b07aca196c" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Baracoa</p>         <p><b>Ubicación:</b> Magangué</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Baracoa' lat='9.28474' lon='-74.8461'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Baracoa',9.28474,-74.8461)"             >Seleccionar</button>              <button id='del_Baracoa' lat='9.28474' lon='-74.8461'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Baracoa',9.28474,-74.8461)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_8f037e93c8d225d559cf14cddbcc725b.setContent(html_c0e53bb7afcb31964274e4b07aca196c);
+            
+        
+
+        marker_23cc7b71937dd638c506414849c4ecee.bindPopup(popup_8f037e93c8d225d559cf14cddbcc725b)
+        ;
+
+        
+    
+    
+            var marker_4653a53c1d0e83be6a1b63ded05dc5ce = L.marker(
+                [2.95015, -75.294],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_d706c58de1e82f06ee2f75b85bd3f45c = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_4653a53c1d0e83be6a1b63ded05dc5ce.setIcon(icon_d706c58de1e82f06ee2f75b85bd3f45c);
+        
+    
+        var popup_dc10381ddcbcae5aec6e595f714abf29 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_1e0ad6a996d0ff6000acfd4395683ece = $(`<div id="html_1e0ad6a996d0ff6000acfd4395683ece" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Benito Salas Vargas</p>         <p><b>Ubicación:</b> Neiva</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Benito Salas Vargas' lat='2.95015' lon='-75.294'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Benito Salas Vargas',2.95015,-75.294)"             >Seleccionar</button>              <button id='del_Benito Salas Vargas' lat='2.95015' lon='-75.294'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Benito Salas Vargas',2.95015,-75.294)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_dc10381ddcbcae5aec6e595f714abf29.setContent(html_1e0ad6a996d0ff6000acfd4395683ece);
+            
+        
+
+        marker_4653a53c1d0e83be6a1b63ded05dc5ce.bindPopup(popup_dc10381ddcbcae5aec6e595f714abf29)
+        ;
+
+        
+    
+    
+            var marker_2f5bafffc62097a92053da79e7d9eb8f = L.marker(
+                [1.85777, -76.0857],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_9aab8842f6eb7c8d5f82382ab8fad7ad = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_2f5bafffc62097a92053da79e7d9eb8f.setIcon(icon_9aab8842f6eb7c8d5f82382ab8fad7ad);
+        
+    
+        var popup_95474ce2d14e87cef53e30e33c71006e = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_45e31b8f72acde46f29e5ca65f60a31d = $(`<div id="html_45e31b8f72acde46f29e5ca65f60a31d" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Contador</p>         <p><b>Ubicación:</b> Pitalito</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Contador' lat='1.85777' lon='-76.0857'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Contador',1.85777,-76.0857)"             >Seleccionar</button>              <button id='del_Contador' lat='1.85777' lon='-76.0857'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Contador',1.85777,-76.0857)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_95474ce2d14e87cef53e30e33c71006e.setContent(html_45e31b8f72acde46f29e5ca65f60a31d);
+            
+        
+
+        marker_2f5bafffc62097a92053da79e7d9eb8f.bindPopup(popup_95474ce2d14e87cef53e30e33c71006e)
+        ;
+
+        
+    
+    
+            var marker_8b85b7afbca77bf6e46ca3dd547abe7e = L.marker(
+                [3.85353, -67.9062],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_5927fe4aa04a92674235fe8eba904c74 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_8b85b7afbca77bf6e46ca3dd547abe7e.setIcon(icon_5927fe4aa04a92674235fe8eba904c74);
+        
+    
+        var popup_245339a2c38809598bc6c986f7e77992 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_269102f9e1add2927dc749e04c5608ed = $(`<div id="html_269102f9e1add2927dc749e04c5608ed" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> César Gaviria Trujillo</p>         <p><b>Ubicación:</b> Puerto Inírida</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='César Gaviria Trujillo' lat='3.85353' lon='-67.9062'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('César Gaviria Trujillo',3.85353,-67.9062)"             >Seleccionar</button>              <button id='del_César Gaviria Trujillo' lat='3.85353' lon='-67.9062'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('César Gaviria Trujillo',3.85353,-67.9062)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_245339a2c38809598bc6c986f7e77992.setContent(html_269102f9e1add2927dc749e04c5608ed);
+            
+        
+
+        marker_8b85b7afbca77bf6e46ca3dd547abe7e.bindPopup(popup_245339a2c38809598bc6c986f7e77992)
+        ;
+
+        
+    
+    
+            var marker_5d05b47c5023a71d5c2bf169eb6a52a4 = L.marker(
+                [2.15217, -74.7663],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_fbb9f7cd3c257e2534bdd5956b8d1d55 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_5d05b47c5023a71d5c2bf169eb6a52a4.setIcon(icon_fbb9f7cd3c257e2534bdd5956b8d1d55);
+        
+    
+        var popup_d78d4ccb0f1ae8244ef43962095da6c5 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_702ca5e6211003a937734b102d659bd2 = $(`<div id="html_702ca5e6211003a937734b102d659bd2" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Eduardo Falla Solano</p>         <p><b>Ubicación:</b> San Vicente Del Caguán</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Eduardo Falla Solano' lat='2.15217' lon='-74.7663'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Eduardo Falla Solano',2.15217,-74.7663)"             >Seleccionar</button>              <button id='del_Eduardo Falla Solano' lat='2.15217' lon='-74.7663'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Eduardo Falla Solano',2.15217,-74.7663)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_d78d4ccb0f1ae8244ef43962095da6c5.setContent(html_702ca5e6211003a937734b102d659bd2);
+            
+        
+
+        marker_5d05b47c5023a71d5c2bf169eb6a52a4.bindPopup(popup_d78d4ccb0f1ae8244ef43962095da6c5)
+        ;
+
+        
+    
+    
+            var marker_93193a7fb9952bd60cc5b9af6ed6f14c = L.marker(
+                [5.69076, -76.6412],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_5708b6f0c0ba529cff811e167dcfb0ae = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_93193a7fb9952bd60cc5b9af6ed6f14c.setIcon(icon_5708b6f0c0ba529cff811e167dcfb0ae);
+        
+    
+        var popup_c13efb9e19b7be8edd55029bc0f11887 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_0e3a905b387ca4d64bef19a52f2ab2c2 = $(`<div id="html_0e3a905b387ca4d64bef19a52f2ab2c2" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> El Caraño</p>         <p><b>Ubicación:</b> Quibdó</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='El Caraño' lat='5.69076' lon='-76.6412'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('El Caraño',5.69076,-76.6412)"             >Seleccionar</button>              <button id='del_El Caraño' lat='5.69076' lon='-76.6412'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('El Caraño',5.69076,-76.6412)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_c13efb9e19b7be8edd55029bc0f11887.setContent(html_0e3a905b387ca4d64bef19a52f2ab2c2);
+            
+        
+
+        marker_93193a7fb9952bd60cc5b9af6ed6f14c.bindPopup(popup_c13efb9e19b7be8edd55029bc0f11887)
+        ;
+
+        
+    
+    
+            var marker_b0addcb643e12befcc2c5d8af31ba5ee = L.marker(
+                [13.357461, -81.357977],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_b03bd453784fe77ad251cbc4a3ae5807 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_b0addcb643e12befcc2c5d8af31ba5ee.setIcon(icon_b03bd453784fe77ad251cbc4a3ae5807);
+        
+    
+        var popup_4209373ce8956e0c351d8cdea79cba6b = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_7872b6bef5955b9ba761c488b2d47a40 = $(`<div id="html_7872b6bef5955b9ba761c488b2d47a40" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> El Embrujo</p>         <p><b>Ubicación:</b> Providencia</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='El Embrujo' lat='13.357461' lon='-81.357977'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('El Embrujo',13.357461,-81.357977)"             >Seleccionar</button>              <button id='del_El Embrujo' lat='13.357461' lon='-81.357977'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('El Embrujo',13.357461,-81.357977)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_4209373ce8956e0c351d8cdea79cba6b.setContent(html_7872b6bef5955b9ba761c488b2d47a40);
+            
+        
+
+        marker_b0addcb643e12befcc2c5d8af31ba5ee.bindPopup(popup_4209373ce8956e0c351d8cdea79cba6b)
+        ;
+
+        
+    
+    
+            var marker_84dcc49c1362f918e088d559dcb66464 = L.marker(
+                [7.59647, -74.8089],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_006dd6e5c1d143e2340db06a4e48df48 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_84dcc49c1362f918e088d559dcb66464.setIcon(icon_006dd6e5c1d143e2340db06a4e48df48);
+        
+    
+        var popup_c0e221086ff5d4c6c39c8c821ee262f7 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_26d68aa9f0b938c4cfd402cd63002e05 = $(`<div id="html_26d68aa9f0b938c4cfd402cd63002e05" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> El tomín</p>         <p><b>Ubicación:</b> El Bagre</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='El tomín' lat='7.59647' lon='-74.8089'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('El tomín',7.59647,-74.8089)"             >Seleccionar</button>              <button id='del_El tomín' lat='7.59647' lon='-74.8089'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('El tomín',7.59647,-74.8089)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_c0e221086ff5d4c6c39c8c821ee262f7.setContent(html_26d68aa9f0b938c4cfd402cd63002e05);
+            
+        
+
+        marker_84dcc49c1362f918e088d559dcb66464.bindPopup(popup_c0e221086ff5d4c6c39c8c821ee262f7)
+        ;
+
+        
+    
+    
+            var marker_d764d53b1c6762ce7817cd11e9fde223 = L.marker(
+                [1.25366, -70.2339],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_2ee4594c2c5585e072a9e676cb0a989e = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_d764d53b1c6762ce7817cd11e9fde223.setIcon(icon_2ee4594c2c5585e072a9e676cb0a989e);
+        
+    
+        var popup_b3e0313b0631fccd76656cce46365ae1 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_124289795317f01dd7f0e106885288f6 = $(`<div id="html_124289795317f01dd7f0e106885288f6" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Fabio Alberto León Bentley</p>         <p><b>Ubicación:</b> Mitú</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Fabio Alberto León Bentley' lat='1.25366' lon='-70.2339'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Fabio Alberto León Bentley',1.25366,-70.2339)"             >Seleccionar</button>              <button id='del_Fabio Alberto León Bentley' lat='1.25366' lon='-70.2339'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Fabio Alberto León Bentley',1.25366,-70.2339)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_b3e0313b0631fccd76656cce46365ae1.setContent(html_124289795317f01dd7f0e106885288f6);
+            
+        
+
+        marker_d764d53b1c6762ce7817cd11e9fde223.bindPopup(popup_b3e0313b0631fccd76656cce46365ae1)
+        ;
+
+        
+    
+    
+            var marker_5d3c50cb8a4d8f9abcd0356b5976925c = L.marker(
+                [6.45108, -71.7603],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_c8626b07359e2cd3dad91c53c3f19fa5 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_5d3c50cb8a4d8f9abcd0356b5976925c.setIcon(icon_c8626b07359e2cd3dad91c53c3f19fa5);
+        
+    
+        var popup_1f01b95a4e76a5b8a5519bb1373c349b = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_7b5711e8ab54473c0ed75a9649b9b3f6 = $(`<div id="html_7b5711e8ab54473c0ed75a9649b9b3f6" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Gabriel Vargas Santos</p>         <p><b>Ubicación:</b> Tame</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Gabriel Vargas Santos' lat='6.45108' lon='-71.7603'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Gabriel Vargas Santos',6.45108,-71.7603)"             >Seleccionar</button>              <button id='del_Gabriel Vargas Santos' lat='6.45108' lon='-71.7603'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Gabriel Vargas Santos',6.45108,-71.7603)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_1f01b95a4e76a5b8a5519bb1373c349b.setContent(html_7b5711e8ab54473c0ed75a9649b9b3f6);
+            
+        
+
+        marker_5d3c50cb8a4d8f9abcd0356b5976925c.bindPopup(popup_1f01b95a4e76a5b8a5519bb1373c349b)
+        ;
+
+        
+    
+    
+            var marker_9c843c04a9a3e20fa31877c96138fb63 = L.marker(
+                [3.81963, -76.9898],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_1412861ff79b6b27dcf5567ad2acaa95 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_9c843c04a9a3e20fa31877c96138fb63.setIcon(icon_1412861ff79b6b27dcf5567ad2acaa95);
+        
+    
+        var popup_1cfdbfa2bf324a4cfdae88f85eb422d4 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_f7ebf402a692214cc093e88fffbe3c78 = $(`<div id="html_f7ebf402a692214cc093e88fffbe3c78" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Gerardo Tovar López</p>         <p><b>Ubicación:</b> Buenaventura</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Gerardo Tovar López' lat='3.81963' lon='-76.9898'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Gerardo Tovar López',3.81963,-76.9898)"             >Seleccionar</button>              <button id='del_Gerardo Tovar López' lat='3.81963' lon='-76.9898'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Gerardo Tovar López',3.81963,-76.9898)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_1cfdbfa2bf324a4cfdae88f85eb422d4.setContent(html_f7ebf402a692214cc093e88fffbe3c78);
+            
+        
+
+        marker_9c843c04a9a3e20fa31877c96138fb63.bindPopup(popup_1cfdbfa2bf324a4cfdae88f85eb422d4)
+        ;
+
+        
+    
+    
+            var marker_b8da4d21a66bc929be28af461ed8fdc3 = L.marker(
+                [6.18472, -67.4932],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_07fa43746fe957ac4a3fd7027c30e2d7 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_b8da4d21a66bc929be28af461ed8fdc3.setIcon(icon_07fa43746fe957ac4a3fd7027c30e2d7);
+        
+    
+        var popup_e167c4889e6e1206dcb25d03e92c07b7 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_a7b71ad95e2e6611c97a30953f1d4776 = $(`<div id="html_a7b71ad95e2e6611c97a30953f1d4776" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Germán Olano</p>         <p><b>Ubicación:</b> Puerto Carreño</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Germán Olano' lat='6.18472' lon='-67.4932'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Germán Olano',6.18472,-67.4932)"             >Seleccionar</button>              <button id='del_Germán Olano' lat='6.18472' lon='-67.4932'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Germán Olano',6.18472,-67.4932)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_e167c4889e6e1206dcb25d03e92c07b7.setContent(html_a7b71ad95e2e6611c97a30953f1d4776);
+            
+        
+
+        marker_b8da4d21a66bc929be28af461ed8fdc3.bindPopup(popup_e167c4889e6e1206dcb25d03e92c07b7)
+        ;
+
+        
+    
+    
+            var marker_323453adba4b482c075f7cce09e0e8a6 = L.marker(
+                [2.4544, -76.6093],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_d9f73a415ab9c16d1c37cb4ab6707331 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_323453adba4b482c075f7cce09e0e8a6.setIcon(icon_d9f73a415ab9c16d1c37cb4ab6707331);
+        
+    
+        var popup_211797aa676f6ff0a6c6ff43b91e2aec = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_75f844c50daf6078156e97dec264e0aa = $(`<div id="html_75f844c50daf6078156e97dec264e0aa" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Guillermo León Valencia</p>         <p><b>Ubicación:</b> Popayán</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Guillermo León Valencia' lat='2.4544' lon='-76.6093'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Guillermo León Valencia',2.4544,-76.6093)"             >Seleccionar</button>              <button id='del_Guillermo León Valencia' lat='2.4544' lon='-76.6093'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Guillermo León Valencia',2.4544,-76.6093)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_211797aa676f6ff0a6c6ff43b91e2aec.setContent(html_75f844c50daf6078156e97dec264e0aa);
+            
+        
+
+        marker_323453adba4b482c075f7cce09e0e8a6.bindPopup(popup_211797aa676f6ff0a6c6ff43b91e2aec)
+        ;
+
+        
+    
+    
+            var marker_3276fcf2877eb36aaaa1569fa9750528 = L.marker(
+                [1.58919, -75.5644],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_cf58f68ec80acf7a4a4ab0f13073ca9c = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_3276fcf2877eb36aaaa1569fa9750528.setIcon(icon_cf58f68ec80acf7a4a4ab0f13073ca9c);
+        
+    
+        var popup_be73437a2b5cd9b8a9fa34682f425226 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_b74408fdbc80022f1149d8a4b6c373ec = $(`<div id="html_b74408fdbc80022f1149d8a4b6c373ec" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Gustavo Artunduaga Paredes</p>         <p><b>Ubicación:</b> Florencia</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Gustavo Artunduaga Paredes' lat='1.58919' lon='-75.5644'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Gustavo Artunduaga Paredes',1.58919,-75.5644)"             >Seleccionar</button>              <button id='del_Gustavo Artunduaga Paredes' lat='1.58919' lon='-75.5644'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Gustavo Artunduaga Paredes',1.58919,-75.5644)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_be73437a2b5cd9b8a9fa34682f425226.setContent(html_b74408fdbc80022f1149d8a4b6c373ec);
+            
+        
+
+        marker_3276fcf2877eb36aaaa1569fa9750528.bindPopup(popup_be73437a2b5cd9b8a9fa34682f425226)
+        ;
+
+        
+    
+    
+            var marker_111a82203f9f48f3ad4d452e9d918afa = L.marker(
+                [2.57969, -72.6394],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_12d491c8bf0b37a417e64277695d009a = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_111a82203f9f48f3ad4d452e9d918afa.setIcon(icon_12d491c8bf0b37a417e64277695d009a);
+        
+    
+        var popup_ce93e22cc8c479af8051179c5570de31 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_1c6448ab1c4b17a43152740fff92b635 = $(`<div id="html_1c6448ab1c4b17a43152740fff92b635" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Jorge Enrique González</p>         <p><b>Ubicación:</b> San José Del Guaviare</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Jorge Enrique González' lat='2.57969' lon='-72.6394'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Jorge Enrique González',2.57969,-72.6394)"             >Seleccionar</button>              <button id='del_Jorge Enrique González' lat='2.57969' lon='-72.6394'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Jorge Enrique González',2.57969,-72.6394)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_ce93e22cc8c479af8051179c5570de31.setContent(html_1c6448ab1c4b17a43152740fff92b635);
+            
+        
+
+        marker_111a82203f9f48f3ad4d452e9d918afa.bindPopup(popup_ce93e22cc8c479af8051179c5570de31)
+        ;
+
+        
+    
+    
+            var marker_9f81ed3222641317d62f72e68cbf0cb2 = L.marker(
+                [11.2325, -72.4901],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_04824ef5440bba71b69a4e7130ba55bc = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_9f81ed3222641317d62f72e68cbf0cb2.setIcon(icon_04824ef5440bba71b69a4e7130ba55bc);
+        
+    
+        var popup_805fe2e6fc1d84c2493497b6cb85f0c5 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_aadcd6952ac06517cc5f2a98ef92237a = $(`<div id="html_aadcd6952ac06517cc5f2a98ef92237a" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Jorge Isaacs</p>         <p><b>Ubicación:</b> Maicao</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Jorge Isaacs' lat='11.2325' lon='-72.4901'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Jorge Isaacs',11.2325,-72.4901)"             >Seleccionar</button>              <button id='del_Jorge Isaacs' lat='11.2325' lon='-72.4901'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Jorge Isaacs',11.2325,-72.4901)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_805fe2e6fc1d84c2493497b6cb85f0c5.setContent(html_aadcd6952ac06517cc5f2a98ef92237a);
+            
+        
+
+        marker_9f81ed3222641317d62f72e68cbf0cb2.bindPopup(popup_805fe2e6fc1d84c2493497b6cb85f0c5)
+        ;
+
+        
+    
+    
+            var marker_1d136a680576066fc51637e3745b36a0 = L.marker(
+                [6.20292, -77.3947],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_247219172ee076255c737e913129af71 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_1d136a680576066fc51637e3745b36a0.setIcon(icon_247219172ee076255c737e913129af71);
+        
+    
+        var popup_1298655b959966cba03bdb2959a26770 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_fd1fd248d42b03242a885a68dcab1149 = $(`<div id="html_fd1fd248d42b03242a885a68dcab1149" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> José Celestino Mutis</p>         <p><b>Ubicación:</b> Bahía Solano</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='José Celestino Mutis' lat='6.20292' lon='-77.3947'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('José Celestino Mutis',6.20292,-77.3947)"             >Seleccionar</button>              <button id='del_José Celestino Mutis' lat='6.20292' lon='-77.3947'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('José Celestino Mutis',6.20292,-77.3947)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_1298655b959966cba03bdb2959a26770.setContent(html_fd1fd248d42b03242a885a68dcab1149);
+            
+        
+
+        marker_1d136a680576066fc51637e3745b36a0.bindPopup(popup_1298655b959966cba03bdb2959a26770)
+        ;
+
+        
+    
+    
+            var marker_39f3e1b9c3c2696dc14795b391c6fd9a = L.marker(
+                [5.21256, -74.8836],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_c71f5486c2c6dca1f28b52a9272bbd84 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_39f3e1b9c3c2696dc14795b391c6fd9a.setIcon(icon_c71f5486c2c6dca1f28b52a9272bbd84);
+        
+    
+        var popup_2d34ac1fecd296c059fda7a4d2af0f65 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_4eab1ffa6838431cb0f9508879c27a3f = $(`<div id="html_4eab1ffa6838431cb0f9508879c27a3f" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> José Celestino Mutis</p>         <p><b>Ubicación:</b> Mariquita</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='José Celestino Mutis' lat='5.21256' lon='-74.8836'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('José Celestino Mutis',5.21256,-74.8836)"             >Seleccionar</button>              <button id='del_José Celestino Mutis' lat='5.21256' lon='-74.8836'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('José Celestino Mutis',5.21256,-74.8836)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_2d34ac1fecd296c059fda7a4d2af0f65.setContent(html_4eab1ffa6838431cb0f9508879c27a3f);
+            
+        
+
+        marker_39f3e1b9c3c2696dc14795b391c6fd9a.bindPopup(popup_2d34ac1fecd296c059fda7a4d2af0f65)
+        ;
+
+        
+    
+    
+            var marker_28deeccd627a17b08d05a26ec1cb7697 = L.marker(
+                [2.57013, -77.897969],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_bf33fb2d1f8db50800cabe0583c6bd76 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_28deeccd627a17b08d05a26ec1cb7697.setIcon(icon_bf33fb2d1f8db50800cabe0583c6bd76);
+        
+    
+        var popup_3158521278da0f1c87be39d2d0f5fd62 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_a4c378d07c9868f345eeb1ca9998f757 = $(`<div id="html_a4c378d07c9868f345eeb1ca9998f757" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Juan Casiano Solís</p>         <p><b>Ubicación:</b> Guapi</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Juan Casiano Solís' lat='2.57013' lon='-77.897969'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Juan Casiano Solís',2.57013,-77.897969)"             >Seleccionar</button>              <button id='del_Juan Casiano Solís' lat='2.57013' lon='-77.897969'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Juan Casiano Solís',2.57013,-77.897969)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_3158521278da0f1c87be39d2d0f5fd62.setContent(html_a4c378d07c9868f345eeb1ca9998f757);
+            
+        
+
+        marker_28deeccd627a17b08d05a26ec1cb7697.bindPopup(popup_3158521278da0f1c87be39d2d0f5fd62)
+        ;
+
+        
+    
+    
+            var marker_3351d4b241460e995a831bc42e0dda0e = L.marker(
+                [7.96847, -75.1985],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_4482131a129020e03307a23a992cbf73 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_3351d4b241460e995a831bc42e0dda0e.setIcon(icon_4482131a129020e03307a23a992cbf73);
+        
+    
+        var popup_4765b80f5ce81751e57aca648b287ce9 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_461a38f261b9f5a8de05dbd632482904 = $(`<div id="html_461a38f261b9f5a8de05dbd632482904" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Juan H. White</p>         <p><b>Ubicación:</b> Caucasia</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Juan H. White' lat='7.96847' lon='-75.1985'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Juan H. White',7.96847,-75.1985)"             >Seleccionar</button>              <button id='del_Juan H. White' lat='7.96847' lon='-75.1985'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Juan H. White',7.96847,-75.1985)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_4765b80f5ce81751e57aca648b287ce9.setContent(html_461a38f261b9f5a8de05dbd632482904);
+            
+        
+
+        marker_3351d4b241460e995a831bc42e0dda0e.bindPopup(popup_4765b80f5ce81751e57aca648b287ce9)
+        ;
+
+        
+    
+    
+            var marker_a099367fb49e9d2d1d34f52fe7c6b382 = L.marker(
+                [1.81442, -78.7492],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_fce4f79705713e39afa97d08d1cdd5a4 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_a099367fb49e9d2d1d34f52fe7c6b382.setIcon(icon_fce4f79705713e39afa97d08d1cdd5a4);
+        
+    
+        var popup_31077baf973c68c3c2c3d2115ce7f449 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_0328b66daad367760b5cf1e95d45a9a4 = $(`<div id="html_0328b66daad367760b5cf1e95d45a9a4" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> La Florida</p>         <p><b>Ubicación:</b> Tumaco</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='La Florida' lat='1.81442' lon='-78.7492'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('La Florida',1.81442,-78.7492)"             >Seleccionar</button>              <button id='del_La Florida' lat='1.81442' lon='-78.7492'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('La Florida',1.81442,-78.7492)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_31077baf973c68c3c2c3d2115ce7f449.setContent(html_0328b66daad367760b5cf1e95d45a9a4);
+            
+        
+
+        marker_a099367fb49e9d2d1d34f52fe7c6b382.bindPopup(popup_31077baf973c68c3c2c3d2115ce7f449)
+        ;
+
+        
+    
+    
+            var marker_53b80522d7e745cb5441006d3e9d70cd = L.marker(
+                [5.0296, -75.4647],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_9ca8bef0f9ddf6aa9dacc8a43f2cf70e = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_53b80522d7e745cb5441006d3e9d70cd.setIcon(icon_9ca8bef0f9ddf6aa9dacc8a43f2cf70e);
+        
+    
+        var popup_da75514b88c8e7870954e59f437c5b3c = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_e57faff8b8acb0ae3b4bc7e34de67ea0 = $(`<div id="html_e57faff8b8acb0ae3b4bc7e34de67ea0" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> La Nubia</p>         <p><b>Ubicación:</b> Manizales</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='La Nubia' lat='5.0296' lon='-75.4647'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('La Nubia',5.0296,-75.4647)"             >Seleccionar</button>              <button id='del_La Nubia' lat='5.0296' lon='-75.4647'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('La Nubia',5.0296,-75.4647)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_da75514b88c8e7870954e59f437c5b3c.setContent(html_e57faff8b8acb0ae3b4bc7e34de67ea0);
+            
+        
+
+        marker_53b80522d7e745cb5441006d3e9d70cd.bindPopup(popup_da75514b88c8e7870954e59f437c5b3c)
+        ;
+
+        
+    
+    
+            var marker_d885ad64dd2014909794d9e61131a8a4 = L.marker(
+                [9.33274, -75.2856],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_a6bdc71a225d88c4b6866b1979daf087 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_d885ad64dd2014909794d9e61131a8a4.setIcon(icon_a6bdc71a225d88c4b6866b1979daf087);
+        
+    
+        var popup_a85c7e1443665003ea69fb4e2e214831 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_f946ff10e15a21e98e9e7da228312386 = $(`<div id="html_f946ff10e15a21e98e9e7da228312386" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Las Brujas</p>         <p><b>Ubicación:</b> Corozal</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Las Brujas' lat='9.33274' lon='-75.2856'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Las Brujas',9.33274,-75.2856)"             >Seleccionar</button>              <button id='del_Las Brujas' lat='9.33274' lon='-75.2856'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Las Brujas',9.33274,-75.2856)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_a85c7e1443665003ea69fb4e2e214831.setContent(html_f946ff10e15a21e98e9e7da228312386);
+            
+        
+
+        marker_d885ad64dd2014909794d9e61131a8a4.bindPopup(popup_a85c7e1443665003ea69fb4e2e214831)
+        ;
+
+        
+    
+    
+            var marker_22c868756a086039e186e7c95dcb79be = L.marker(
+                [6.220549, -75.590582],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_2f7280d728a66fd02d747ae745e1785e = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_22c868756a086039e186e7c95dcb79be.setIcon(icon_2f7280d728a66fd02d747ae745e1785e);
+        
+    
+        var popup_992ccf9b732bbd9c012729a3a0f754fc = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_262467ed72a80c1aa3cc96369dde8a56 = $(`<div id="html_262467ed72a80c1aa3cc96369dde8a56" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Olaya Herrera</p>         <p><b>Ubicación:</b> Medellín</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Olaya Herrera' lat='6.220549' lon='-75.590582'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Olaya Herrera',6.220549,-75.590582)"             >Seleccionar</button>              <button id='del_Olaya Herrera' lat='6.220549' lon='-75.590582'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Olaya Herrera',6.220549,-75.590582)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_992ccf9b732bbd9c012729a3a0f754fc.setContent(html_262467ed72a80c1aa3cc96369dde8a56);
+            
+        
+
+        marker_22c868756a086039e186e7c95dcb79be.bindPopup(popup_992ccf9b732bbd9c012729a3a0f754fc)
+        ;
+
+        
+    
+    
+            var marker_46c7827156890e5a0f522047cf109c57 = L.marker(
+                [5.87615, -71.8866],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_dc318dcfb7f3beae55c909846e71fbe9 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_46c7827156890e5a0f522047cf109c57.setIcon(icon_dc318dcfb7f3beae55c909846e71fbe9);
+        
+    
+        var popup_1b0fbf06a21da858d1b175baf8303742 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_3ba415de57deaf120ee4b070df9753c5 = $(`<div id="html_3ba415de57deaf120ee4b070df9753c5" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Paz de Ariporo</p>         <p><b>Ubicación:</b> Paz De Ariporo</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Paz de Ariporo' lat='5.87615' lon='-71.8866'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Paz de Ariporo',5.87615,-71.8866)"             >Seleccionar</button>              <button id='del_Paz de Ariporo' lat='5.87615' lon='-71.8866'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Paz de Ariporo',5.87615,-71.8866)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_1b0fbf06a21da858d1b175baf8303742.setContent(html_3ba415de57deaf120ee4b070df9753c5);
+            
+        
+
+        marker_46c7827156890e5a0f522047cf109c57.bindPopup(popup_1b0fbf06a21da858d1b175baf8303742)
+        ;
+
+        
+    
+    
+            var marker_2a1fbcf38e8ffe9d5b243e381417a999 = L.marker(
+                [4.42161, -75.1333],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_7d287c2f60a0d85187e2c705c3471c92 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_2a1fbcf38e8ffe9d5b243e381417a999.setIcon(icon_7d287c2f60a0d85187e2c705c3471c92);
+        
+    
+        var popup_33d53d17ee69900f9b98b7cb84413456 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_b842b445083b68dc2ce94b5d9a4458bc = $(`<div id="html_b842b445083b68dc2ce94b5d9a4458bc" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Perales</p>         <p><b>Ubicación:</b> Ibagué</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Perales' lat='4.42161' lon='-75.1333'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Perales',4.42161,-75.1333)"             >Seleccionar</button>              <button id='del_Perales' lat='4.42161' lon='-75.1333'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Perales',4.42161,-75.1333)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_33d53d17ee69900f9b98b7cb84413456.setContent(html_b842b445083b68dc2ce94b5d9a4458bc);
+            
+        
+
+        marker_2a1fbcf38e8ffe9d5b243e381417a999.bindPopup(popup_33d53d17ee69900f9b98b7cb84413456)
+        ;
+
+        
+    
+    
+            var marker_a43286c344b80f3a5cc866d59440ada6 = L.marker(
+                [4.75818, -75.9557],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_8dc17d3e14094b1f4cb73ebfa10e9f38 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_a43286c344b80f3a5cc866d59440ada6.setIcon(icon_8dc17d3e14094b1f4cb73ebfa10e9f38);
+        
+    
+        var popup_ccee0d1566fc8800197bd6f61ae31eb6 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_22a2eb529322cc86b96f57eee92842a8 = $(`<div id="html_22a2eb529322cc86b96f57eee92842a8" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Santa Ana</p>         <p><b>Ubicación:</b> Cartago</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Santa Ana' lat='4.75818' lon='-75.9557'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Santa Ana',4.75818,-75.9557)"             >Seleccionar</button>              <button id='del_Santa Ana' lat='4.75818' lon='-75.9557'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Santa Ana',4.75818,-75.9557)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_ccee0d1566fc8800197bd6f61ae31eb6.setContent(html_22a2eb529322cc86b96f57eee92842a8);
+            
+        
+
+        marker_a43286c344b80f3a5cc866d59440ada6.bindPopup(popup_ccee0d1566fc8800197bd6f61ae31eb6)
+        ;
+
+        
+    
+    
+            var marker_6423ae20fa900b0dad37b5fbab7608b0 = L.marker(
+                [7.06888, -70.7369],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_92d9b05fc2daf5ea4710c00ea001c44b = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_6423ae20fa900b0dad37b5fbab7608b0.setIcon(icon_92d9b05fc2daf5ea4710c00ea001c44b);
+        
+    
+        var popup_136e9456c321fdb53e3fb6ba5c00e9f5 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_4e0452cd72d0737188a4577a5d007d4f = $(`<div id="html_4e0452cd72d0737188a4577a5d007d4f" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Santiago Pérez Quiroz</p>         <p><b>Ubicación:</b> Arauca</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Santiago Pérez Quiroz' lat='7.06888' lon='-70.7369'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Santiago Pérez Quiroz',7.06888,-70.7369)"             >Seleccionar</button>              <button id='del_Santiago Pérez Quiroz' lat='7.06888' lon='-70.7369'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Santiago Pérez Quiroz',7.06888,-70.7369)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_136e9456c321fdb53e3fb6ba5c00e9f5.setContent(html_4e0452cd72d0737188a4577a5d007d4f);
+            
+        
+
+        marker_6423ae20fa900b0dad37b5fbab7608b0.bindPopup(popup_136e9456c321fdb53e3fb6ba5c00e9f5)
+        ;
+
+        
+    
+    
+            var marker_1167e7620e9be4a2cb9b7aaca3aef1e3 = L.marker(
+                [4.27624, -74.7967],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_6b441dab1c61b8a4eb9c0127f666116a = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_1167e7620e9be4a2cb9b7aaca3aef1e3.setIcon(icon_6b441dab1c61b8a4eb9c0127f666116a);
+        
+    
+        var popup_700a6a72b7f087a132236955ac7c2fdc = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_5ecb87e2961ef04cb9b1d1a3e3e0684d = $(`<div id="html_5ecb87e2961ef04cb9b1d1a3e3e0684d" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Santiago Vila</p>         <p><b>Ubicación:</b> Girardot</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Santiago Vila' lat='4.27624' lon='-74.7967'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Santiago Vila',4.27624,-74.7967)"             >Seleccionar</button>              <button id='del_Santiago Vila' lat='4.27624' lon='-74.7967'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Santiago Vila',4.27624,-74.7967)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_700a6a72b7f087a132236955ac7c2fdc.setContent(html_5ecb87e2961ef04cb9b1d1a3e3e0684d);
+            
+        
+
+        marker_1167e7620e9be4a2cb9b7aaca3aef1e3.bindPopup(popup_700a6a72b7f087a132236955ac7c2fdc)
+        ;
+
+        
+    
+    
+            var marker_b34fadc7955ecf9607a7ca931a290fef = L.marker(
+                [0.505228, -76.5008],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_c6173eef24e617c45ec3d87ac323ace5 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_b34fadc7955ecf9607a7ca931a290fef.setIcon(icon_c6173eef24e617c45ec3d87ac323ace5);
+        
+    
+        var popup_8c5c4b912048a126b1e3c68925bcf947 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_b5a97315a086031577197960759180fa = $(`<div id="html_b5a97315a086031577197960759180fa" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Tres de Mayo</p>         <p><b>Ubicación:</b> Puerto Asís</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Tres de Mayo' lat='0.505228' lon='-76.5008'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Tres de Mayo',0.505228,-76.5008)"             >Seleccionar</button>              <button id='del_Tres de Mayo' lat='0.505228' lon='-76.5008'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Tres de Mayo',0.505228,-76.5008)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_8c5c4b912048a126b1e3c68925bcf947.setContent(html_b5a97315a086031577197960759180fa);
+            
+        
+
+        marker_b34fadc7955ecf9607a7ca931a290fef.bindPopup(popup_8c5c4b912048a126b1e3c68925bcf947)
+        ;
+
+        
+    
+    
+            var marker_8cb472140c7e62ac7b01cd52d62ae703 = L.marker(
+                [4.16787, -73.6138],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_5982079ffe7e77f8b160a8d78bb5f4bd = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_8cb472140c7e62ac7b01cd52d62ae703.setIcon(icon_5982079ffe7e77f8b160a8d78bb5f4bd);
+        
+    
+        var popup_4aa66477df0403fe7f8a0788555a1ef5 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_80e98cc0097aa31be19282774477e543 = $(`<div id="html_80e98cc0097aa31be19282774477e543" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Vanguardia</p>         <p><b>Ubicación:</b> Villavicencio</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Vanguardia' lat='4.16787' lon='-73.6138'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Vanguardia',4.16787,-73.6138)"             >Seleccionar</button>              <button id='del_Vanguardia' lat='4.16787' lon='-73.6138'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Vanguardia',4.16787,-73.6138)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_4aa66477df0403fe7f8a0788555a1ef5.setContent(html_80e98cc0097aa31be19282774477e543);
+            
+        
+
+        marker_8cb472140c7e62ac7b01cd52d62ae703.bindPopup(popup_4aa66477df0403fe7f8a0788555a1ef5)
+        ;
+
+        
+    
+    
+            var marker_dcfcb3b7830ed2fcc56332b9062b8411 = L.marker(
+                [7.02433, -73.8068],
+                {}
+            ).addTo(map_44e742c23e81cd705d2fc47524212eb2);
+        
+    
+            var icon_e8ada369eb1566baa9732d5ed5bdfcfd = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "plane", "iconColor": "white", "markerColor": "gray", "prefix": "glyphicon"}
+            );
+            marker_dcfcb3b7830ed2fcc56332b9062b8411.setIcon(icon_e8ada369eb1566baa9732d5ed5bdfcfd);
+        
+    
+        var popup_c076e9f876117b95dcfcb6048b2eda80 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_ef0fe1823aa9450de2eed7d19e69ac3b = $(`<div id="html_ef0fe1823aa9450de2eed7d19e69ac3b" style="width: 100.0%; height: 100.0%;">         <p><b>Aeropuerto:</b> Yariguíes</p>         <p><b>Ubicación:</b> Barrancabermeja</p>         <div style="display: flex; justify-content: center; flex-wrap: wrap;">             <button id='Yariguíes' lat='7.02433' lon='-73.8068'                 style="                     border: none;                     background: #d13d29;                     color: white;                     padding: 5px 20px;                 "                 onclick="AddAirport('Yariguíes',7.02433,-73.8068)"             >Seleccionar</button>              <button id='del_Yariguíes' lat='7.02433' lon='-73.8068'                 style="                     display: none;                     border: none;                     margin-top: 5px;                     background: #575757;                     width: 100%;                     color: white;                     padding: 5px 20px;                 "                 onclick="DelAirport('Yariguíes',7.02433,-73.8068)"             >Quitar</button>         </div>              </div>`)[0];
+                popup_c076e9f876117b95dcfcb6048b2eda80.setContent(html_ef0fe1823aa9450de2eed7d19e69ac3b);
+            
+        
+
+        marker_dcfcb3b7830ed2fcc56332b9062b8411.bindPopup(popup_c076e9f876117b95dcfcb6048b2eda80)
+        ;
+
+        
+    
+</script>
+
+
+<!-- IMPORTS -->
+<script src="../static/js/leaflet.motion.min.js"></script>
+<script src="../static/js/leaflet.geometryutil.js"></script>
+<script src="../static/js/leaflet-arrowheads.js"></script>
+<script src="../static/js/leaflet.textpath.js"></script>
+
+<!-- MY SCRIPTS -->
+<script src="../static/js/alerts.js"></script>
+<script src="../static/js/tools.js"></script>
+<script src="../static/js/graph.js"></script>
+<script src="../static/js/markers.js"></script>
+<script src="../static/js/motion.js"></script>

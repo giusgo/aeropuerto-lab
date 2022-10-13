@@ -1,0 +1,3 @@
+vincenty==0.1.4
+Flask-Failsafe==0.2
+Flask==2.2.2
